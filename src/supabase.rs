@@ -112,3 +112,59 @@ impl SupabaseClient {
             .map_err(|e| ApiError::Supabase(e.to_string()))
     }
 }
+impl SupabaseClient {
+    /// Fetch a single backup by ID
+    pub async fn get_backup_by_id(
+        &self,
+        backup_id: Uuid,
+        user: &CurrentUser,
+    ) -> Result<Option<Backup>, AppError> {
+        let url = format!("{}/rest/v1/backups?id=eq.{}&select=*", self.url, backup_id);
+
+        let response = self
+            .client
+            .get(&url)
+            .header("apikey", &self.anon_key)
+            .header("Authorization", format!("Bearer {}", user.access_token))
+            .send()
+            .await?;
+
+        let backups: Vec<Backup> = response.json().await?;
+        Ok(backups.into_iter().next())
+    }
+
+    /// Fetch a device by ID to confirm ownership
+    pub async fn get_device_by_id(
+        &self,
+        device_id: Uuid,
+        user: &CurrentUser,
+    ) -> Result<Option<Device>, AppError> {
+        let url = format!("{}/rest/v1/devices?id=eq.{}&select=*", self.url, device_id);
+
+        let response = self
+            .client
+            .get(&url)
+            .header("apikey", &self.anon_key)
+            .header("Authorization", format!("Bearer {}", user.access_token))
+            .send()
+            .await?;
+
+        let devices: Vec<Device> = response.json().await?;
+        Ok(devices.into_iter().next())
+    }
+
+    /// Increment the fork count on a backup using RPC or PATCH
+    pub async fn increment_fork_count(&self, backup_id: Uuid) -> Result<(), AppError> {
+        let url = format!("{}/rest/v1/rpc/increment_fork_count", self.url);
+
+        let _ = self
+            .client
+            .post(&url)
+            .header("apikey", &self.anon_key)
+            .json(&serde_json::json!({ "backup_id": backup_id }))
+            .send()
+            .await;
+
+        Ok(())
+    }
+}

@@ -100,3 +100,15 @@ drop trigger if exists backups_set_updated_at on public.backups;
 create trigger backups_set_updated_at
 before update on public.backups
 for each row execute function public.set_updated_at();
+
+-- 1. Add visibility and metrics columns to backups
+ALTER TABLE backups 
+ADD COLUMN is_public BOOLEAN NOT NULL DEFAULT FALSE,
+ADD COLUMN fork_count INT NOT NULL DEFAULT 0;
+
+-- 2. Update RLS policy to allow users to read ANY public backup,
+--    while maintaining write-protection (only owners can modify/delete)
+CREATE POLICY "Allow reading public backups" 
+ON backups 
+FOR SELECT 
+USING (is_public = true OR auth.uid() = user_id);
