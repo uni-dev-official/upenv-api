@@ -151,3 +151,14 @@ The API does not execute shell commands and does not restore software itself.
 A restore request should eventually create a job. The desktop client polls or subscribes to that job and performs the local operations.
 
 This keeps the remote API from becoming a remote-code-execution service for the user's machine.
+
+## 🗺️Roadmap
+
+[ ] Storage Integration: File/object payload storage via Supabase Storage.
+[ ] Job Queue: Restore job status tracking and asynchronous execution state.
+[ ] CLI Access: API Key provisioning for headless environments.
+[ ] Device Health: Heartbeat pinging and last_seen timestamps.
+[ ] Optimization: Backup deduplication and incremental versioning.
+[ ] Rate Limiting: Axum middleware for traffic governance.
+[ ] OpenAPI: Automated Swagger/OpenAPI specification generation.
+[ ] Deployment: CI/CD pipeline targeting api.upenv.dev.
