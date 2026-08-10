@@ -168,3 +168,21 @@ impl SupabaseClient {
         Ok(())
     }
 }
+pub async fn patch<T, B>(
+    &self,
+    path: &str,
+    access_token: &str,
+    body: &B,
+) -> Result<T, ApiError>
+where
+    T: DeserializeOwned,
+    B: serde::Serialize,
+{
+    self.request(
+        reqwest::Method::PATCH,
+        path,
+        access_token,
+        Some(body),
+    )
+    .await
+}

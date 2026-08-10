@@ -50,8 +50,12 @@ pub struct Backup {
     pub name: String,
     pub manifest: serde_json::Value,
     pub status: String,
+
     pub is_public: bool,
     pub fork_count: Option<i32>,
+
+    pub forked_from: Option<Uuid>,
+
     pub created_at: Option<String>,
     pub updated_at: Option<String>,
 }

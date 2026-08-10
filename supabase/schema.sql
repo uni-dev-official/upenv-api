@@ -112,3 +112,4 @@ CREATE POLICY "Allow reading public backups"
 ON backups 
 FOR SELECT 
 USING (is_public = true OR auth.uid() = user_id);
+
